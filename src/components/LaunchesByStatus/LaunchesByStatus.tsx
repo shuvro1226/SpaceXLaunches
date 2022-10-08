@@ -6,6 +6,7 @@ import { STATUS_CONFIG } from "../../lib/consts";
 import Launches from "../Launches/Launches";
 import { Status } from "../../types";
 import ToastComponent from "../ToastComponent/ToastComponent";
+import styles from './LaunchByStatus.module.css';
 
 const LaunchesByStatus = (): JSX.Element => {
   const [key, setKey] = useState<string>("success");
@@ -66,11 +67,10 @@ const LaunchesByStatus = (): JSX.Element => {
       <Tabs
         activeKey={key}
         onSelect={(k: any): void => setKey(k)}
-        className="mb-3"
       >
         {STATUS_CONFIG.map((status: Status, i: number) => {
           return (
-            <Tab key={i} eventKey={status.identifier} title={status.name}>
+            <Tab key={i} eventKey={status.identifier} title={status.name} className={`${styles.tabWrapper} pt-3`}>
               <Launches status={status.identifier} />
             </Tab>
           );
