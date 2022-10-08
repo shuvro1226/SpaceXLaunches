@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
+import Spinner from "react-bootstrap/Spinner";
 import { STATUS_CONFIG } from "../../lib/consts";
 import Launches from "../Launches/Launches";
 import { Status } from "../../types";
@@ -15,7 +16,6 @@ const LaunchesByStatus = (): JSX.Element => {
     const token = localStorage.getItem("token");
     if (token) {
       setIsAuthenticated(true);
-      setShow(true);
     } else {
       const login = async () => {
         const body = {
@@ -24,7 +24,7 @@ const LaunchesByStatus = (): JSX.Element => {
         };
 
         // Used this dummy API endpoint to send a login request
-        // and fetch a token to use for sending requests to SPACEX API
+        // and fetch a JWT token and store in localstorage for reuse
         const loginJSON = await fetch("https://reqres.in/api/login", {
           method: "POST",
           headers: {
@@ -39,7 +39,7 @@ const LaunchesByStatus = (): JSX.Element => {
       };
 
       // Adding 3 seconds delay for loggin in to show the authenticating message
-      const loginInterval = setInterval(() => login(), 3000);
+      const loginInterval = setInterval(() => login(), 5000);
 
       return () => clearInterval(loginInterval);
     }
@@ -48,7 +48,8 @@ const LaunchesByStatus = (): JSX.Element => {
   if (!isAuthenticated) {
     return (
       <>
-        <h4 className="mt-5">Authenticating...</h4>
+        <h3 className="mt-5 mb-2"><Spinner animation="border" /></h3>
+        <h4>Authenticating...</h4>
       </>
     );
   }
@@ -57,7 +58,7 @@ const LaunchesByStatus = (): JSX.Element => {
     <>
       <ToastComponent
         variant="Success"
-        headerMessage="Logged In!"
+        headerMessage="Login Successful!"
         message="You are authenticated!"
         show={show}
         setShow={setShow}
