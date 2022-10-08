@@ -6,13 +6,14 @@ import React, {
   MutableRefObject,
   useCallback,
   ChangeEvent,
+  KeyboardEvent,
 } from "react";
 import { SPACEX_API_ENDPOINT } from "../../lib/consts";
 import Launch from "./Launch/Launch";
 import { Container, Row, Col, Form } from "react-bootstrap";
 import styles from "./Launches.module.css";
 import { setQueryParams } from "../../lib/helper";
-import {Launch as LaunchType} from '../../types';
+import { Launch as LaunchType } from "../../types";
 
 type Props = {
   status: string;
@@ -102,6 +103,11 @@ const Launches = (props: Props): JSX.Element => {
                 handleSearchTextChange(e)
               }
               onBlur={handleBlur}
+              onKeyPress={(e: KeyboardEvent<HTMLInputElement>) => {
+                if (e.key === "Enter") {
+                  handleBlur();
+                }
+              }}
             />
           </Col>
         </Row>
