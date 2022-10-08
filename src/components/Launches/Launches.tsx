@@ -21,11 +21,11 @@ type Props = {
 const Launches = (props: Props): JSX.Element => {
   const { status } = props;
   const [launches, setLaunches] = useState<LaunchType[]>([]);
-  const [page, setPage] = useState(1);
-  const [hasNextPage, setHasNextPage] = useState(true);
-  const [searchText, setSearchText] = useState("");
+  const [page, setPage] = useState<number>(1);
+  const [hasNextPage, setHasNextPage] = useState<boolean>(true);
+  const [searchText, setSearchText] = useState<string>("");
 
-  const handleSearchText = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleSearchTextChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchText(e.target.value);
   };
 
@@ -38,9 +38,9 @@ const Launches = (props: Props): JSX.Element => {
       launches: LaunchType[],
       status: string,
       searchText: string
-    ) => {
+    ): Promise<void> => {
       const params = setQueryParams(status, page, searchText);
-      const token = localStorage.getItem("token");
+      // const token = localStorage.getItem("token");
 
       const launchesJSON = await fetch(
         `${SPACEX_API_ENDPOINT}/launches/query`,
@@ -56,8 +56,6 @@ const Launches = (props: Props): JSX.Element => {
         }
       );
       const launchesData = await launchesJSON.json();
-        console.log('launchesData', launchesData);
-        
       const { docs, nextPage, hasNextPage } = launchesData;
       const previousLaunches: LaunchType[] = [...launches];
       const updatedLaunches: LaunchType[] = [...previousLaunches, ...docs];
@@ -72,7 +70,7 @@ const Launches = (props: Props): JSX.Element => {
     loadNextLaunches(page, launches, status, searchText);
   }, [loadNextLaunches]);
 
-  const handleScroll = () => {
+  const handleScroll = (): void => {
     if (launchesListRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = launchesListRef.current;
       if (scrollTop + clientHeight === scrollHeight && hasNextPage) {
@@ -81,7 +79,7 @@ const Launches = (props: Props): JSX.Element => {
     }
   };
 
-  const handleBlur = () => {
+  const handleBlur = (): void => {
     loadNextLaunches(1, [], status, searchText);
   };
 
@@ -95,12 +93,13 @@ const Launches = (props: Props): JSX.Element => {
         <Row>
           <Col>
             <Form.Control
+              id={`${status}_search`}
               type="text"
               placeholder="Search"
               value={searchText}
               className="mb-4"
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                handleSearchText(e)
+                handleSearchTextChange(e)
               }
               onBlur={handleBlur}
             />

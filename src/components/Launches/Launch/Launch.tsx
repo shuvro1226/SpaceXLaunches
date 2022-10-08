@@ -2,7 +2,7 @@ import React from "react";
 import { Card, Badge } from "react-bootstrap";
 import styles from "./Launch.module.css";
 import { STATUS_CONFIG } from "../../../lib/consts";
-import placeholder from "./placeholder.jpeg";
+import placeholder from "../../../assets/placeholder.jpeg";
 import dayjs from 'dayjs';
 import {Launch as LaunchType, Status} from '../../../types';
 
@@ -13,23 +13,23 @@ type Props = {
 const Launch = (props: Props): JSX.Element => {
   const { launch } = props;  
   const { name = "", details = "", links, success, upcoming, rocket, date_utc } = launch;
-  const launchDate = dayjs(date_utc).format('dddd, MMMM D, YYYY h:mm A')
+  const launchDate: string = dayjs(date_utc).format('dddd, MMMM D, YYYY h:mm A')
   const imageSrc =
     links?.flickr?.original?.length > 0
       ? links?.flickr?.original[0]
       : placeholder;
 
-  let statusDetails = STATUS_CONFIG.find(
+  let statusDetails: Status = STATUS_CONFIG.find(
     (config: Status, i: number) => config.identifier === "success"
-  );
+  )!;
   if (upcoming) {
     statusDetails = STATUS_CONFIG.find(
       (config: Status, i: number) => config.identifier === "upcoming"
-    );
+    )!;
   } else if (!success) {
     statusDetails = STATUS_CONFIG.find(
       (config: Status, i: number) => config.identifier === "failed"
-    );
+    )!;
   }
 
   return (
@@ -38,7 +38,7 @@ const Launch = (props: Props): JSX.Element => {
       <Card.Body>
         <Card.Title>{name}</Card.Title>
         <Card.Text as="div">
-          <Badge bg={statusDetails?.style}>{statusDetails?.name}</Badge>
+          <Badge data-testid="badge" bg={statusDetails?.style}>{statusDetails?.name}</Badge>
           <div className="w-100">
             <strong>Launch Date: </strong>{launchDate}
           </div>
@@ -47,12 +47,11 @@ const Launch = (props: Props): JSX.Element => {
             {rocket.name}
           </div>
           <div className="w-100">
-            <strong>Details: </strong>
-            {`${
+            {
               details
-                ? details?.substring(0, 200)
-                : "No details found for this launch"
-            }...`}
+                ? `${details?.substring(0, 200)}...`
+                : "No details available for this launch."
+            }
           </div>
         </Card.Text>
       </Card.Body>

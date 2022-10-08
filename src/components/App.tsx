@@ -1,11 +1,11 @@
 import React from "react";
 import "./App.css";
-import LaunchesByType from "./LaunchesByType/LaunchesByType";
+import LaunchesByStatus from "./LaunchesByStatus/LaunchesByStatus";
 
 function App() {
   return (
     <div className="App">
-      <LaunchesByType />
+      <LaunchesByStatus />
     </div>
   );
 }

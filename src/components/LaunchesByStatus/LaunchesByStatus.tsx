@@ -3,26 +3,29 @@ import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 import { STATUS_CONFIG } from "../../lib/consts";
 import Launches from "../Launches/Launches";
-import {Status} from '../../types';
+import { Status } from "../../types";
+import ToastComponent from "../ToastComponent/ToastComponent";
 
-const LaunchesByType = (): JSX.Element => {
-  const [key, setKey] = useState("success");
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+const LaunchesByStatus = (): JSX.Element => {
+  const [key, setKey] = useState<string>("success");
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [show, setShow] = useState<boolean>(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
       setIsAuthenticated(true);
+      setShow(true);
     } else {
       const login = async () => {
         const body = {
           email: "eve.holt@reqres.in",
           password: "cityslicka",
         };
-  
+
         // Used this dummy API endpoint to send a login request
         // and fetch a token to use for sending requests to SPACEX API
-        const loginJSON = await fetch("https://reqres.in/api/login", { 
+        const loginJSON = await fetch("https://reqres.in/api/login", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -32,23 +35,33 @@ const LaunchesByType = (): JSX.Element => {
         const loginData = await loginJSON.json();
         localStorage.setItem("token", loginData.token);
         setIsAuthenticated(true);
+        setShow(true);
       };
-  
+
       // Adding 3 seconds delay for loggin in to show the authenticating message
       const loginInterval = setInterval(() => login(), 3000);
-  
+
       return () => clearInterval(loginInterval);
     }
   }, []);
 
   if (!isAuthenticated) {
-    return <>
-      <h4 className="mt-5">Authenticating...</h4>
-    </>;
+    return (
+      <>
+        <h4 className="mt-5">Authenticating...</h4>
+      </>
+    );
   }
-  
+
   return (
     <>
+      <ToastComponent
+        variant="Success"
+        headerMessage="Logged In!"
+        message="You are authenticated!"
+        show={show}
+        setShow={setShow}
+      />
       <Tabs
         activeKey={key}
         onSelect={(k: any): void => setKey(k)}
@@ -66,4 +79,4 @@ const LaunchesByType = (): JSX.Element => {
   );
 };
 
-export default LaunchesByType;
+export default LaunchesByStatus;
